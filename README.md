@@ -1,125 +1,119 @@
 # 📡 Realtime Map Event Grid (RTEG)
 
-[![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)](https://php.net/)
-[![Databases](https://img.shields.io/badge/Databases-SQLite%20%7C%20PostgreSQL%20%7C%20MySQL-003B57?logo=postgresql&logoColor=white)](https://sqlite.org/)
-[![Leaflet](https://img.shields.io/badge/Leaflet-1.9.4-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://docker.com)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+<p align="center">
+  <a href="https://php.net/"><img src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8+"></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-PostGIS-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"></a>
+  <a href="https://www.mysql.com/"><img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"></a>
+  <a href="https://www.sqlite.org/"><img src="https://img.shields.io/badge/SQLite-3.0%2B-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite"></a>
+  <a href="https://docker.com"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge" alt="Apache 2.0 License"></a>
+</p>
 
-> **High-Performance Spatial Event Ingestion & Realtime Visualization Engine**  
-> *Gerçek Zamanlı Coğrafi Olay Toplama, Canlı Akış & Isı Haritası (Heatmap) Motoru*
+<p align="center">
+  <b>High-Performance Spatial Event Ingestion & Realtime Visualization Engine</b><br>
+  <i>Ultra-lightweight, zero-dependency PHP 8 core with Server-Sent Events (SSE), Heatmap layers, and historical time replay.</i>
+</p>
 
----
-
-## 🇹🇷 Türkçe Açıklama
-
-### 🎯 Proje Özeti
-**Realtime Map Event Grid (RTEG)**; IoT sensörleri, araç takip filoları, teslimat/kurye ağları, güvenlik alarmları ve mobil uygulamalardan gelen coğrafi olayları (Spatial Events) REST API üzerinden toplayan, kaydeden, Server-Sent Events (SSE) ile sıfır gecikmeli yayınlayan ve Leaflet.js / Heatmap ile görselleştiren hafif ve modüler bir platformdur.
-
-Framework bağımlılığı olmadan saf (Vanilla) PHP 8 ve modern JavaScript ile geliştirilmiştir.
-
-### ✨ Temel Özellikler
-* **⚡ Sıfır Gecikmeli Canlı Akış (SSE & Smart Polling):** Server-Sent Events ile anlık push bildirimi. Bağlantı kesintilerinde otomatik akıllı Polling fallback.
-* **🔥 Dinamik Isı Haritası (Heatmap) & Katmanlar:**
-  * 📍 **Pin Modu:** Olay türüne göre renkli ve pulsate animasyonlu pinler.
-  * 🔥 **Isı Haritası (Heatmap):** Olay yoğunluğunu gösteren renk gradyanı.
-  * ✨ **Karma Mod:** Pinler ve ısı haritasının eşzamanlı gösterimi.
-* **🔍 Gelişmiş Coğrafi & Metin Filtreleme:**
-  * **Bounding Box:** Sadece haritada görünen alandaki olayları listeleme.
-  * **Payload Arama:** JSON payload ve olay ID içinde anlık metin araması.
-  * **Kategori & Kaynak:** Olay türü ve API kaynağı bazlı filtreleme.
-* **🗄️ Çoklu Veritabanı Desteği:** Tek bir ayarla **SQLite**, **PostgreSQL / PostGIS** veya **MySQL / MariaDB** üzerinde çalışma (sıfır bağımlılık veya yüksek hacimli kurumsal ölçek).
-* **⏱️ Olay Geçmişi Oynatıcı (Time Scrubber / Replay):** Harita üzerinde geçmiş olayları video gibi ileri-geri sarma, 1x-10x hızlarında oynatma ve zaman damgasına göre dinamik canlandırma.
-* **🎲 Dahili Olay Simülatörü:** Tek tıkla gerçekçi koordinatlara sahip araç hareketi, sensör alarmı ve teslimat olayları üreten test motoru.
-* **📊 Sistem Analitiği & Grafikler:** Chart.js ile 24 saatlik saatlik olay trendi, tür dağılım donut grafiği ve en aktif kaynaklar tablosu.
-* **🔑 API Kaynak Yönetimi:** Dış sistemler için `X-Source-Key` üretme, duraklatma ve yönetme.
-* **🚦 Kaynak Bazlı Hız Sınırı (Rate Limiting):** Token Bucket algoritması ile `X-RateLimit-*` başlıkları üzerinden kaynak başına saniyelik/dakikalık istek sınırlaması (HTTP 429 koruması).
-* **🔔 Outbound Webhook:** Gelen olayları HMAC-SHA256 imzasıyla harici partner URL'lerine POST eden kuyruk altyapısı.
-* **💎 Ultra Modern Dark UI:** Glassmorphism, Inter/Outfit tipografisi, syntax-highlighted JSON modalı ve sesli bildirimler.
+<p align="center">
+  <a href="README.md"><b>English 🇬🇧</b></a> •
+  <a href="README.tr.md"><b>Türkçe 🇹🇷</b></a>
+</p>
 
 ---
 
-## 🇬🇧 English Description
+## 🎯 Overview
 
-### 🎯 Overview
-**Realtime Map Event Grid (RTEG)** is a lightweight, high-performance spatial event processing and visualization platform. It ingests geo-located events from external IoT sensors, fleet trackers, courier dispatchers, and mobile clients via REST API, stores them in SQLite, streams them with Server-Sent Events (SSE), and renders them on an interactive dark-themed Leaflet map.
+**Realtime Map Event Grid (RTEG)** is a lightweight, high-throughput spatial event ingestion, processing, and visualization platform. It collects geo-located events from external IoT sensors, fleet trackers, delivery networks, mobile clients, and security monitoring systems via REST APIs, stores them across SQLite, PostgreSQL/PostGIS, or MySQL databases, streams them in real-time using Server-Sent Events (SSE), and renders them on an ultra-sleek dark Leaflet map with density heatmaps.
 
-### ✨ Key Highlights
-* **⚡ Zero-Latency Streaming:** Native Server-Sent Events (SSE) push channel with automatic 3s polling fallback.
-* **🔥 Multi-Layer Visualization:** Switch seamlessly between Pins, Heatmap Density layer, and Combined mode.
-* **🔍 Dynamic Spatial Filtering:** Bounding-box (visible map viewport), JSON payload full-text search, and multi-criteria filters.
-* **🗄️ Multi-Database Architecture:** Seamless plug-and-play support for **SQLite**, **PostgreSQL / PostGIS**, and **MySQL / MariaDB**.
-* **⏱️ Historical Time Scrubber & Map Replay:** Scrub, rewind, and replay events across a dynamic timeline with variable playback speeds (1x to 10x).
-* **🎲 Built-in Event Simulator:** On-demand generator for realistic vehicle movements, sensor alerts, and deliveries.
-* **📊 Analytics Dashboard:** 24-hour hourly trend line charts and category doughnut distributions via Chart.js.
-* **🔑 API Key & Source Management:** Dynamic `X-Source-Key` generation and status toggles.
-* **🚦 Token Bucket Rate Limiter:** Per-source request throttling with standard `X-RateLimit-*` and `Retry-After` headers (HTTP 429).
-* **🔔 Outbound Webhooks:** Background queue dispatcher with HMAC-SHA256 signatures.
+Built with pure Vanilla PHP 8 and modern vanilla JavaScript, offering enterprise-grade speed without framework bloat.
 
 ---
 
-## 🏗️ Mimari & Veri Akışı / Architecture
+## ✨ Key Features
+
+* **⚡ Zero-Latency Live Streaming (SSE):** Native Server-Sent Events push channel for instant event broadcasting with an automatic 3-second smart polling fallback.
+* **🔥 Dynamic Heatmap & Layer Modes:**
+  * 📍 **Pins Mode:** Color-coded markers with glowing pulse animations by category.
+  * 🔥 **Heatmap Mode:** Real-time density gradient showing spatial event concentration.
+  * ✨ **Combined Mode:** Overlay markers and heatmap density simultaneously.
+* **⏱️ Historical Time Scrubber & Map Replay:** Interactive playback controller to rewind, scrub, and replay historical events across time with variable speeds (1x, 2x, 5x, 10x).
+* **🗄️ Multi-Database Architecture:** Seamless plug-and-play support for **SQLite** (zero-config file DB), **PostgreSQL / PostGIS** (enterprise spatial querying), and **MySQL / MariaDB**.
+* **🚦 Token Bucket Rate Limiting:** Per-source request throttling with standard `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, and `Retry-After` headers (HTTP 429 protection).
+* **🔍 Multi-Dimensional Spatial Filtering:**
+  * **Bounding Box:** Filter events strictly within the visible map viewport.
+  * **JSON Full-Text Search:** Search instantly within event IDs, categories, and JSON payloads.
+  * **Source & Category:** Multi-select dropdown filters.
+* **🎲 Built-in Event Simulator:** On-demand generator for realistic vehicle movements, courier deliveries, sensor alerts, and temperature spikes.
+* **📊 Analytics Dashboard (Chart.js):** 24-hour hourly trend line charts, category doughnut distributions, and top API client rankings.
+* **🔑 API Source Management:** Dynamic generation and status toggling of `X-Source-Key` credentials.
+* **🔔 Outbound Webhooks:** Background dispatcher queue with HMAC-SHA256 payload signatures.
+* **🌐 Full Bilingual Support (i18n):** Instant TR / EN language toggle across all dashboards, modals, charts, and public maps without page reloads.
+
+---
+
+## 🏗️ Architecture & Data Flow
 
 ```mermaid
 graph LR
-    A["📡 Dış Sistemler / IoT / Filo"] -->|"POST /api/v1/event/ingest.php<br/>Header: X-Source-Key"| B["⚡ EventManager & Logger"]
-    B -->|"Kayıt & İndeksleme"| C[("🗄️ SQLite Database")]
-    B -->|"Kuyruk"| D["🔔 Outbound Webhook"]
-    C -->|"SSE Push Stream"| E["🗺️ Canlı Harita & Dashboard (Leaflet + Heatmap)"]
-    C -->|"GET /api/v1/public/events.php"| F["🌐 Genel Ziyaretçi Haritası & API İstemcileri"]
-    C -->|"GET /api/v1/stats.php"| G["📊 Analitik Paneli (Chart.js)"]
+    A["📡 External Clients / IoT / Fleet"] -->|"POST /api/v1/event/ingest.php<br/>Header: X-Source-Key"| B["⚡ EventManager & RateLimiter"]
+    B -->|"Store & Index"| C[("🗄️ Database<br/>SQLite / PostgreSQL / MySQL")]
+    B -->|"Enqueue"| D["🔔 Outbound Webhook Queue"]
+    C -->|"SSE Push Stream"| E["🗺️ Live Admin Dashboard (Leaflet + Heatmap + Replay)"]
+    C -->|"GET /api/v1/public/events.php"| F["🌐 Public Map & API Consumers"]
+    C -->|"GET /api/v1/stats.php"| G["📊 Analytics Dashboard (Chart.js)"]
 ```
 
 ---
 
-## 🚀 Hızlı Kurulum / Quick Start
+## 🚀 Quick Start
 
-### Seçenek A: 🐳 Docker ile Tek Komutla Çalıştırma (Önerilen)
+### Option A: 🐳 1-Click Run with Docker (Recommended)
+
 ```bash
 git clone https://github.com/adacreativeco/realtime-map-event-grid.git
 cd realtime-map-event-grid
 
-# Tek komutla başlatın
+# Start the application in detached mode
 docker compose up -d
 ```
-Sistem anında `http://localhost:8081` üzerinde hazır olacaktır!
+The application will be live immediately at `http://localhost:8081`!
 
 ---
 
-### Seçenek B: PHP Built-in Server ile Çalıştırma
+### Option B: Run Locally with PHP Built-in Server
+
 ```bash
 git clone https://github.com/adacreativeco/realtime-map-event-grid.git
 cd realtime-map-event-grid
 
-# Yapılandırmayı kopyalayın
+# Copy default credentials
 cp config/credentials.example.php config/credentials.php
 
-# Veritabanını başlatın
+# Initialize the database schema
 php database/init.php
 
-# Sunucuyu başlatın
+# Launch the development server
 php -S localhost:8081 -t public
 ```
 
 ---
 
-## 🔐 Varsayılan Giriş Bilgileri / Default Credentials
+## 🔐 Default Credentials
 
-| Alan / Field | Değer / Value |
+| Field | Value |
 |---|---|
-| **URL** | `http://localhost:8081/login.php` |
-| **Kullanıcı Adı / Username** | `admin` |
-| **Şifre / Password** | `password123` |
+| **Login URL** | `http://localhost:8081/login.php` |
+| **Username** | `admin` |
+| **Password** | `password123` |
 
-*(Canlı ortamda `config/credentials.php` üzerinden şifreyi değiştirmeniz önerilir.)*
+*(You can modify credentials in `config/credentials.php` using `password_hash()` in production.)*
 
 ---
 
-## 📡 API Uç Noktaları / API Endpoints
+## 📡 API Endpoints
 
-### 1. Olay Girişi (Event Ingest)
-* **Endpoint:** `POST /api/v1/event/ingest.php`
+### 1. Ingest Event
+* **Method:** `POST /api/v1/event/ingest.php`
 * **Headers:** `Content-Type: application/json`, `X-Source-Key: <YOUR_API_KEY>`
 
 ```bash
@@ -139,44 +133,56 @@ curl -X POST http://localhost:8081/api/v1/event/ingest.php \
   }'
 ```
 
-### 2. Canlı Akış (Server-Sent Events)
-* **Endpoint:** `GET /api/v1/events/stream.php`
+**Response (`201 Created`):**
+```json
+{
+  "status": "success",
+  "event_id": "evt_64f1a2b3c4d5e"
+}
+```
+
+### 2. Live Stream (Server-Sent Events)
+* **Method:** `GET /api/v1/events/stream.php`
 
 ```javascript
-const stream = new EventSource('/api/v1/events/stream.php');
+const stream = new EventSource('http://localhost:8081/api/v1/events/stream.php');
 stream.addEventListener('event', (e) => {
     const event = JSON.parse(e.data);
-    console.log('Canlı Olay:', event);
+    console.log('Live Event Received:', event);
 });
 ```
 
-### 3. Genel Okuma API (Public Read)
-* **Endpoint:** `GET /api/v1/public/events.php?limit=50&type=vehicle_movement`
+### 3. Public Events API
+* **Method:** `GET /api/v1/public/events.php?limit=50&type=vehicle_movement&search=34-ABC`
 
 ---
 
-## 🗂️ Dizin Yapısı / Directory Structure
+## 🗂️ Directory Structure
 
 ```text
 realtime-map-event-grid/
-├── config/              # Ayarlar (settings.php, credentials.php)
-├── database/            # SQLite veritabanı & init scripti
-├── public/              # Web Root (Sunulan sayfalar & API'ler)
-│   ├── api/v1/          # REST API & SSE endpointleri (ingest, stream, events, stats)
-│   ├── assets/          # CSS stilleri & Vanilla JS harita motorları
-│   ├── index.php        # Yönetici Harita Paneli (Dashboard)
-│   ├── stats.php        # Analitik & İstatistikler
-│   ├── sources.php      # API Anahtar Yönetimi
-│   ├── public_map.php   # Genel Ziyaretçi Haritası
-│   └── api_docs.php     # İnteraktif API Dokümantasyonu
-├── scripts/             # Cron / Bakım scriptleri (cleanup.php, dispatch_webhooks.php)
-├── src/                 # Çekirdek Sınıflar (Auth, Database, EventManager, Logger, Webhook)
-├── test_ingest.php      # Test veri gönderim scripti
-├── LICENSE              # MIT Lisansı
-└── README.md            # Proje Dokümantasyonu
+├── config/              # Configuration files (settings.php, credentials.php)
+├── database/            # Database schema initialization & migrations
+├── public/              # Web Root (Application pages & REST endpoints)
+│   ├── api/v1/          # REST API (ingest, stream, events, stats, simulator)
+│   ├── assets/          # CSS themes, i18n dictionary, Leaflet & Replay JS engines
+│   ├── index.php        # Admin Map Dashboard with Time Scrubber
+│   ├── stats.php        # Analytics & System Reports
+│   ├── sources.php      # Source & API Key Management
+│   ├── public_map.php   # Visitor Live Map
+│   └── api_docs.php     # Interactive API Documentation
+├── scripts/             # Maintenance workers (cleanup.php, dispatch_webhooks.php)
+├── src/                 # Core Classes (Auth, Database, EventManager, Logger, RateLimiter, Webhook)
+├── Dockerfile           # Production Alpine PHP 8.2 Container
+├── docker-compose.yml   # Multi-container orchestration config
+├── docker-entrypoint.sh # Container startup bootstrap script
+├── LICENSE              # Apache 2.0 License
+├── README.md            # English Documentation
+└── README.tr.md         # Türkçe Dokümantasyon
 ```
 
 ---
 
-## 📄 Lisans / License
-Bu proje [Apache 2.0 Lisansı](LICENSE) altında lisanslanmıştır.
+## 📄 License
+This project is licensed under the [Apache License 2.0](LICENSE).
+Copyright 2026 **ADA Creative Co.**
