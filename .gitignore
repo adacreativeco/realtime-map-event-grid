@@ -1,0 +1,21 @@
+# SQLite Databases
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+!database/.gitkeep
+
+# Temporary / Session / Cookies
+cookies.txt
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.trae/
+
+# Environment / Local credentials override
+*.local.php
