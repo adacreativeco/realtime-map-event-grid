@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rteg-engine
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      # Persist SQLite database across container restarts
+      - ./database:/var/www/html/database
+      # Persist configuration
+      - ./config:/var/www/html/config
+    environment:
+      - TZ=UTC
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/v1/public/events.php?limit=1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
