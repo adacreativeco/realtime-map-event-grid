@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../../../src/EventManager.php';
 require_once __DIR__ . '/../../../../src/Logger.php';
 require_once __DIR__ . '/../../../../src/Webhook.php';
+require_once __DIR__ . '/../../../../src/RateLimiter.php';
 
 header('Content-Type: application/json');
 
@@ -33,6 +34,29 @@ if (!$source) {
     exit;
 }
 
+// Check Rate Limiting
+$settings = file_exists(__DIR__ . '/../../../../config/settings.php') ? require __DIR__ . '/../../../../config/settings.php' : [];
+$rateLimitEnabled = $settings['rate_limit_enabled'] ?? true;
+$maxRequests = $settings['rate_limit_max_requests'] ?? 120;
+$window = $settings['rate_limit_window'] ?? 60;
+
+if ($rateLimitEnabled) {
+    $limiter = new RateLimiter();
+    $rateCheck = $limiter->check($source['source_id'], $maxRequests, $window);
+    RateLimiter::setHeaders($rateCheck);
+
+    if (!$rateCheck['allowed']) {
+        Logger::log($source['source_id'], file_get_contents('php://input'), 'Rate limit exceeded: ' . $source['source_id']);
+        http_response_code(429);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Rate limit exceeded. Please retry after ' . $rateCheck['retry_after'] . ' seconds.',
+            'retry_after' => $rateCheck['retry_after']
+        ]);
+        exit;
+    }
+}
+
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
@@ -50,7 +74,6 @@ try {
     echo json_encode(['status' => 'success', 'event_id' => $eventId]);
 } catch (Exception $e) {
     Logger::log($source['source_id'], $input, $e->getMessage());
-    // Determine error code based on message
     if (strpos($e->getMessage(), 'Missing field') !== false) {
         http_response_code(400);
     } elseif (strpos($e->getMessage(), 'Invalid coordinates') !== false) {

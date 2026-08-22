@@ -45,6 +45,12 @@ $commands = [
         status TEXT DEFAULT 'pending',
         created_at DATETIME,
         updated_at DATETIME
+    )",
+    "CREATE TABLE IF NOT EXISTS rate_limits (
+        key_identifier TEXT PRIMARY KEY,
+        tokens REAL NOT NULL,
+        last_updated REAL NOT NULL,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )"
 ];
 

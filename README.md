@@ -33,6 +33,7 @@ Framework bağımlılığı olmadan saf (Vanilla) PHP 8 ve modern JavaScript ile
 * **🎲 Dahili Olay Simülatörü:** Tek tıkla gerçekçi koordinatlara sahip araç hareketi, sensör alarmı ve teslimat olayları üreten test motoru.
 * **📊 Sistem Analitiği & Grafikler:** Chart.js ile 24 saatlik saatlik olay trendi, tür dağılım donut grafiği ve en aktif kaynaklar tablosu.
 * **🔑 API Kaynak Yönetimi:** Dış sistemler için `X-Source-Key` üretme, duraklatma ve yönetme.
+* **🚦 Kaynak Bazlı Hız Sınırı (Rate Limiting):** Token Bucket algoritması ile `X-RateLimit-*` başlıkları üzerinden kaynak başına saniyelik/dakikalık istek sınırlaması (HTTP 429 koruması).
 * **🔔 Outbound Webhook:** Gelen olayları HMAC-SHA256 imzasıyla harici partner URL'lerine POST eden kuyruk altyapısı.
 * **💎 Ultra Modern Dark UI:** Glassmorphism, Inter/Outfit tipografisi, syntax-highlighted JSON modalı ve sesli bildirimler.
 
@@ -51,6 +52,7 @@ Framework bağımlılığı olmadan saf (Vanilla) PHP 8 ve modern JavaScript ile
 * **🎲 Built-in Event Simulator:** On-demand generator for realistic vehicle movements, sensor alerts, and deliveries.
 * **📊 Analytics Dashboard:** 24-hour hourly trend line charts and category doughnut distributions via Chart.js.
 * **🔑 API Key & Source Management:** Dynamic `X-Source-Key` generation and status toggles.
+* **🚦 Token Bucket Rate Limiter:** Per-source request throttling with standard `X-RateLimit-*` and `Retry-After` headers (HTTP 429).
 * **🔔 Outbound Webhooks:** Background queue dispatcher with HMAC-SHA256 signatures.
 
 ---
