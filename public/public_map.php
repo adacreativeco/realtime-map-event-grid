@@ -43,6 +43,11 @@
                 🇹🇷 TR
             </button>
 
+            <!-- Replay Scrubber Toggle -->
+            <button id="btn-replay-toggle" onclick="toggleReplayMode()" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-800/90 hover:bg-gray-700 text-gray-300 transition-all flex items-center space-x-1 border border-gray-700/50 shadow" title="Geçmiş Oynatıcı / Time Replay">
+                <span data-i18n="replay_btn_toggle">⏱️ Geçmiş Oynatıcı</span>
+            </button>
+
             <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-gray-900/80 border border-gray-800">
                 <div id="conn-dot" class="live-dot"></div>
                 <span id="conn-label" data-i18n="conn_sse" class="text-xs font-semibold text-emerald-400">SSE Canlı</span>
@@ -102,6 +107,29 @@
                 <button id="mode-heatmap" onclick="setViewMode('heatmap')" class="mode-btn px-3 py-1.5 rounded-xl text-xs font-medium text-gray-400 hover:text-gray-200 transition-all">
                     <span data-i18n="mode_heatmap">🔥 Isı Haritası</span>
                 </button>
+            </div>
+
+            <!-- Replay Scrubber Panel -->
+            <div id="replay-panel" class="hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-11/12 max-w-xl glass-panel rounded-2xl p-4 shadow-2xl border border-cyan-500/40 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm">⏱️</span>
+                        <span data-i18n="replay_title" class="text-xs font-bold text-gray-100">Zaman Çizelgesi & Oynatıcı</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-xs font-mono">
+                        <span id="replay-current-time" class="text-cyan-300 font-semibold">-</span>
+                        <button onclick="exitReplayMode()" data-i18n="replay_return_live" class="px-2 py-0.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-semibold transition-colors">
+                            🔴 Canlıya Dön
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <button id="btn-replay-play" onclick="togglePlayReplay()" class="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-cyan-600/30 transition-all shrink-0">
+                        <span data-i18n="replay_play">▶️ Oynat</span>
+                    </button>
+                    <input type="range" id="replay-slider" oninput="onReplaySliderChange(this.value)" class="flex-1 accent-cyan-500 cursor-pointer h-2 bg-gray-800 rounded-lg">
+                </div>
             </div>
         </main>
     </div>

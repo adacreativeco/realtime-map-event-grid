@@ -10,6 +10,15 @@ let viewMode = 'both';
 let eventSource = null;
 let pollingInterval = null;
 
+// Replay state
+let isReplayMode = false;
+let replayIsPlaying = false;
+let replaySpeed = 1;
+let replayCurrentTime = null;
+let replayMinTime = null;
+let replayMaxTime = null;
+let replayInterval = null;
+
 const eventConfig = {
     'vehicle_movement': { color: '#38bdf8', icon: '🚗', labelKey: 'type_vehicle_movement', badge: 'bg-sky-500/20 text-sky-400 border-sky-500/30' },
     'sensor_alert': { color: '#f59e0b', icon: '⚠️', labelKey: 'type_sensor_alert', badge: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
@@ -155,9 +164,11 @@ function handleIncomingEvent(evt) {
     lastEventId = evt.event_id;
 
     addEventToMap(evt);
-    rebuildHeatmap();
-    renderEventList();
-    updateFilterCounters();
+    if (!isReplayMode) {
+        rebuildHeatmap();
+        renderEventList();
+        updateFilterCounters();
+    }
 }
 
 function addEventToMap(evt) {
@@ -192,7 +203,8 @@ function addEventToMap(evt) {
 
 function rebuildHeatmap() {
     if (!heatLayer) return;
-    heatLayer.setLatLngs(events.map(e => [e.lat, e.lon, 0.8]));
+    const active = getFilteredEvents();
+    heatLayer.setLatLngs(active.map(e => [e.lat, e.lon, 0.8]));
 }
 
 function setViewMode(mode) {
@@ -248,6 +260,7 @@ function getFilteredEvents() {
     const search = (document.getElementById('filter-search')?.value || '').toLowerCase().trim();
 
     return events.filter(e => {
+        if (isReplayMode && replayCurrentTime && e.timestamp > replayCurrentTime) return false;
         if (type && e.type !== type) return false;
         if (search && !(e.event_id.toLowerCase().includes(search) || e.type.toLowerCase().includes(search))) return false;
         return true;
@@ -282,6 +295,120 @@ function updateFilterCounters() {
     typeSelect.value = cur;
 }
 
+// Replay functions
+function toggleReplayMode() {
+    isReplayMode = !isReplayMode;
+    const panel = document.getElementById('replay-panel');
+    const toggleBtn = document.getElementById('btn-replay-toggle');
+
+    if (isReplayMode) {
+        if (events.length === 0) {
+            isReplayMode = false;
+            return;
+        }
+
+        const timestamps = events.map(e => e.timestamp);
+        replayMinTime = Math.min(...timestamps);
+        replayMaxTime = Math.max(...timestamps, Math.floor(Date.now() / 1000));
+        if (replayMinTime === replayMaxTime) replayMinTime -= 300;
+
+        replayCurrentTime = replayMinTime;
+
+        const slider = document.getElementById('replay-slider');
+        if (slider) {
+            slider.min = replayMinTime;
+            slider.max = replayMaxTime;
+            slider.value = replayCurrentTime;
+        }
+
+        if (panel) panel.classList.remove('hidden');
+        if (toggleBtn) {
+            toggleBtn.classList.remove('text-gray-400');
+            toggleBtn.classList.add('bg-cyan-600', 'text-white');
+        }
+
+        updateReplayDisplay();
+        applyClientFilters();
+    } else {
+        exitReplayMode();
+    }
+}
+
+function exitReplayMode() {
+    isReplayMode = false;
+    pauseReplay();
+    const panel = document.getElementById('replay-panel');
+    const toggleBtn = document.getElementById('btn-replay-toggle');
+
+    if (panel) panel.classList.add('hidden');
+    if (toggleBtn) {
+        toggleBtn.classList.remove('bg-cyan-600', 'text-white');
+        toggleBtn.classList.add('text-gray-400');
+    }
+
+    applyClientFilters();
+}
+
+function togglePlayReplay() {
+    if (replayIsPlaying) pauseReplay();
+    else playReplay();
+}
+
+function playReplay() {
+    if (!isReplayMode) return;
+    replayIsPlaying = true;
+    const playBtn = document.getElementById('btn-replay-play');
+    if (playBtn) playBtn.innerHTML = `<span>${window.i18n ? window.i18n.t('replay_pause') : '⏸️ Duraklat'}</span>`;
+
+    if (replayCurrentTime >= replayMaxTime) replayCurrentTime = replayMinTime;
+
+    const stepSeconds = 15 * replaySpeed;
+    if (replayInterval) clearInterval(replayInterval);
+
+    replayInterval = setInterval(() => {
+        replayCurrentTime += stepSeconds;
+        if (replayCurrentTime >= replayMaxTime) {
+            replayCurrentTime = replayMaxTime;
+            pauseReplay();
+        }
+
+        const slider = document.getElementById('replay-slider');
+        if (slider) slider.value = replayCurrentTime;
+
+        updateReplayDisplay();
+        applyClientFilters();
+    }, 200);
+}
+
+function pauseReplay() {
+    replayIsPlaying = false;
+    if (replayInterval) {
+        clearInterval(replayInterval);
+        replayInterval = null;
+    }
+    const playBtn = document.getElementById('btn-replay-play');
+    if (playBtn) playBtn.innerHTML = `<span>${window.i18n ? window.i18n.t('replay_play') : '▶️ Oynat'}</span>`;
+}
+
+function onReplaySliderChange(value) {
+    replayCurrentTime = parseInt(value, 10);
+    updateReplayDisplay();
+    applyClientFilters();
+}
+
+function updateReplayDisplay() {
+    const timeDisplay = document.getElementById('replay-current-time');
+    const countDisplay = document.getElementById('replay-active-count');
+    if (timeDisplay && replayCurrentTime) {
+        const d = new Date(replayCurrentTime * 1000);
+        timeDisplay.textContent = `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    }
+    if (countDisplay) {
+        const shown = getFilteredEvents().length;
+        countDisplay.textContent = `${shown} / ${events.length} ${window.i18n ? window.i18n.t('replay_events_shown') : 'Olay'}`;
+    }
+}
+
 function focusEvent(id) {
     const evt = events.find(e => e.event_id === id);
     if (!evt) return;
@@ -299,8 +426,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderEventList();
         updateFilterCounters();
         setConnectionStatus(connectionMode);
+        updateReplayDisplay();
     });
 });
 
 window.setViewMode = setViewMode;
 window.focusEvent = focusEvent;
+window.toggleReplayMode = toggleReplayMode;
+window.exitReplayMode = exitReplayMode;
+window.togglePlayReplay = togglePlayReplay;
+window.onReplaySliderChange = onReplaySliderChange;

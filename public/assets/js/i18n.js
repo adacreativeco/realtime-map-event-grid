@@ -75,6 +75,15 @@ const translations = {
         'toast_sound_on': 'Olay ses bildirimleri aktif edildi 🔔',
         'toast_sound_off': 'Olay ses bildirimleri kapatıldı 🔕',
 
+        // Replay Time Scrubber
+        'replay_btn_toggle': '⏱️ Geçmiş Oynatıcı',
+        'replay_title': 'Zaman Çizelgesi & Oynatıcı',
+        'replay_play': '▶️ Oynat',
+        'replay_pause': '⏸️ Duraklat',
+        'replay_return_live': '🔴 Canlıya Dön',
+        'replay_speed': 'Hız:',
+        'replay_events_shown': 'Olay Gösteriliyor',
+
         // Stats Page
         'stats_title': 'Sistem Analitiği & Raporlar',
         'stats_subtitle': 'Gerçek zamanlı olay akış hacimleri ve kaynak performans metrikleri',
@@ -200,6 +209,15 @@ const translations = {
         'toast_auto_sim_stop': 'Auto simulation stopped',
         'toast_sound_on': 'Audio notifications enabled 🔔',
         'toast_sound_off': 'Audio notifications disabled 🔕',
+
+        // Replay Time Scrubber
+        'replay_btn_toggle': '⏱️ Time Replay',
+        'replay_title': 'Timeline & Replay Player',
+        'replay_play': '▶️ Play',
+        'replay_pause': '⏸️ Pause',
+        'replay_return_live': '🔴 Return to Live',
+        'replay_speed': 'Speed:',
+        'replay_events_shown': 'Events Shown',
 
         // Stats Page
         'stats_title': 'System Analytics & Reports',

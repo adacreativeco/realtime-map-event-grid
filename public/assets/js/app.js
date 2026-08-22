@@ -13,6 +13,15 @@ let pollingInterval = null;
 let autoSimInterval = null;
 let soundEnabled = false;
 
+// Replay & Timeline State
+let isReplayMode = false;
+let replayIsPlaying = false;
+let replaySpeed = 1;
+let replayCurrentTime = null;
+let replayMinTime = null;
+let replayMaxTime = null;
+let replayInterval = null;
+
 // Audio context for sound alert
 let audioCtx = null;
 function playNotificationSound() {
@@ -231,11 +240,14 @@ function handleIncomingEvent(evt, isLive = true) {
 
     lastEventId = evt.event_id;
     addEventToMap(evt, isLive);
-    rebuildHeatmap();
-    renderEventList();
-    updateFilterCounters();
+    
+    if (!isReplayMode) {
+        rebuildHeatmap();
+        renderEventList();
+        updateFilterCounters();
+    }
 
-    if (isLive) {
+    if (isLive && !isReplayMode) {
         playNotificationSound();
         showToastNotification(evt);
     }
@@ -283,7 +295,8 @@ function addEventToMap(evt, isNew = false) {
 
 function rebuildHeatmap() {
     if (!heatLayer) return;
-    const heatData = events.map(e => [e.lat, e.lon, 0.8]);
+    const activeEvents = getFilteredEvents();
+    const heatData = activeEvents.map(e => [e.lat, e.lon, 0.8]);
     heatLayer.setLatLngs(heatData);
 }
 
@@ -359,6 +372,11 @@ function getFilteredEvents() {
     const bounds = map ? map.getBounds() : null;
 
     return events.filter(evt => {
+        // In Replay Mode: only show events that happened up to replayCurrentTime
+        if (isReplayMode && replayCurrentTime && evt.timestamp > replayCurrentTime) {
+            return false;
+        }
+
         if (typeFilter && evt.type !== typeFilter) return false;
         if (sourceFilter && evt.source_id !== sourceFilter) return false;
         if (searchFilter) {
@@ -427,6 +445,148 @@ function updateFilterCounters() {
         sourceSelect.appendChild(opt);
     });
     sourceSelect.value = curSource;
+}
+
+// ==========================================
+// HISTORICAL REPLAY & TIME SCRUBBER CONTROLLER
+// ==========================================
+
+function toggleReplayMode() {
+    isReplayMode = !isReplayMode;
+    const panel = document.getElementById('replay-panel');
+    const toggleBtn = document.getElementById('btn-replay-toggle');
+
+    if (isReplayMode) {
+        if (events.length === 0) {
+            showToast('Oynatılacak olay kaydı bulunamadı', 'info');
+            isReplayMode = false;
+            return;
+        }
+
+        const timestamps = events.map(e => e.timestamp);
+        replayMinTime = Math.min(...timestamps);
+        replayMaxTime = Math.max(...timestamps, Math.floor(Date.now() / 1000));
+        if (replayMinTime === replayMaxTime) replayMinTime -= 300; // minimum 5 min window
+
+        replayCurrentTime = replayMinTime;
+
+        const slider = document.getElementById('replay-slider');
+        if (slider) {
+            slider.min = replayMinTime;
+            slider.max = replayMaxTime;
+            slider.value = replayCurrentTime;
+        }
+
+        if (panel) panel.classList.remove('hidden');
+        if (toggleBtn) {
+            toggleBtn.classList.remove('text-gray-400');
+            toggleBtn.classList.add('bg-indigo-600', 'text-white');
+        }
+
+        updateReplayDisplay();
+        applyClientFilters();
+        showToast('Zaman çizelgesi oynatma modu aktif!', 'info');
+    } else {
+        exitReplayMode();
+    }
+}
+
+function exitReplayMode() {
+    isReplayMode = false;
+    pauseReplay();
+    const panel = document.getElementById('replay-panel');
+    const toggleBtn = document.getElementById('btn-replay-toggle');
+
+    if (panel) panel.classList.add('hidden');
+    if (toggleBtn) {
+        toggleBtn.classList.remove('bg-indigo-600', 'text-white');
+        toggleBtn.classList.add('text-gray-400');
+    }
+
+    applyClientFilters();
+    showToast('Canlı akış moduna dönüldü', 'info');
+}
+
+function togglePlayReplay() {
+    if (replayIsPlaying) {
+        pauseReplay();
+    } else {
+        playReplay();
+    }
+}
+
+function playReplay() {
+    if (!isReplayMode) return;
+    replayIsPlaying = true;
+    const playBtn = document.getElementById('btn-replay-play');
+    if (playBtn) playBtn.innerHTML = `<span>${window.i18n ? window.i18n.t('replay_pause') : '⏸️ Duraklat'}</span>`;
+
+    if (replayCurrentTime >= replayMaxTime) {
+        replayCurrentTime = replayMinTime;
+    }
+
+    const stepSeconds = 15 * replaySpeed; // Step 15s per tick multiplied by speed
+    if (replayInterval) clearInterval(replayInterval);
+
+    replayInterval = setInterval(() => {
+        replayCurrentTime += stepSeconds;
+        if (replayCurrentTime >= replayMaxTime) {
+            replayCurrentTime = replayMaxTime;
+            pauseReplay();
+        }
+
+        const slider = document.getElementById('replay-slider');
+        if (slider) slider.value = replayCurrentTime;
+
+        updateReplayDisplay();
+        applyClientFilters();
+    }, 200);
+}
+
+function pauseReplay() {
+    replayIsPlaying = false;
+    if (replayInterval) {
+        clearInterval(replayInterval);
+        replayInterval = null;
+    }
+    const playBtn = document.getElementById('btn-replay-play');
+    if (playBtn) playBtn.innerHTML = `<span>${window.i18n ? window.i18n.t('replay_play') : '▶️ Oynat'}</span>`;
+}
+
+function onReplaySliderChange(value) {
+    replayCurrentTime = parseInt(value, 10);
+    updateReplayDisplay();
+    applyClientFilters();
+}
+
+function setReplaySpeed(multiplier) {
+    replaySpeed = multiplier;
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('bg-gray-800', 'text-gray-400');
+    });
+    const activeSpeedBtn = document.getElementById(`speed-${multiplier}x`);
+    if (activeSpeedBtn) {
+        activeSpeedBtn.classList.remove('bg-gray-800', 'text-gray-400');
+        activeSpeedBtn.classList.add('bg-indigo-600', 'text-white');
+    }
+
+    if (replayIsPlaying) {
+        playReplay(); // Restart interval with new speed
+    }
+}
+
+function updateReplayDisplay() {
+    const timeDisplay = document.getElementById('replay-current-time');
+    const countDisplay = document.getElementById('replay-active-count');
+    if (timeDisplay && replayCurrentTime) {
+        const d = new Date(replayCurrentTime * 1000);
+        timeDisplay.textContent = `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    }
+    if (countDisplay) {
+        const shown = getFilteredEvents().length;
+        countDisplay.textContent = `${shown} / ${events.length} ${window.i18n ? window.i18n.t('replay_events_shown') : 'Olay'}`;
+    }
 }
 
 function focusEvent(eventId) {
@@ -672,6 +832,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderEventList();
         updateFilterCounters();
         setConnectionStatus(connectionMode);
+        updateReplayDisplay();
     });
 });
 
@@ -683,3 +844,8 @@ window.setViewMode = setViewMode;
 window.triggerSimulator = triggerSimulator;
 window.toggleAutoSimulator = toggleAutoSimulator;
 window.toggleSound = toggleSound;
+window.toggleReplayMode = toggleReplayMode;
+window.exitReplayMode = exitReplayMode;
+window.togglePlayReplay = togglePlayReplay;
+window.onReplaySliderChange = onReplaySliderChange;
+window.setReplaySpeed = setReplaySpeed;
