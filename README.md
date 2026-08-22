@@ -1,7 +1,7 @@
 # 📡 Realtime Map Event Grid (RTEG)
 
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?logo=php&logoColor=white)](https://php.net/)
-[![SQLite](https://img.shields.io/badge/SQLite-3.0%2B-003B57?logo=sqlite&logoColor=white)](https://sqlite.org/)
+[![Databases](https://img.shields.io/badge/Databases-SQLite%20%7C%20PostgreSQL%20%7C%20MySQL-003B57?logo=postgresql&logoColor=white)](https://sqlite.org/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-1.9.4-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://docker.com)
@@ -29,6 +29,7 @@ Framework bağımlılığı olmadan saf (Vanilla) PHP 8 ve modern JavaScript ile
   * **Bounding Box:** Sadece haritada görünen alandaki olayları listeleme.
   * **Payload Arama:** JSON payload ve olay ID içinde anlık metin araması.
   * **Kategori & Kaynak:** Olay türü ve API kaynağı bazlı filtreleme.
+* **🗄️ Çoklu Veritabanı Desteği:** Tek bir ayarla **SQLite**, **PostgreSQL / PostGIS** veya **MySQL / MariaDB** üzerinde çalışma (sıfır bağımlılık veya yüksek hacimli kurumsal ölçek).
 * **⏱️ Olay Geçmişi Oynatıcı (Time Scrubber / Replay):** Harita üzerinde geçmiş olayları video gibi ileri-geri sarma, 1x-10x hızlarında oynatma ve zaman damgasına göre dinamik canlandırma.
 * **🎲 Dahili Olay Simülatörü:** Tek tıkla gerçekçi koordinatlara sahip araç hareketi, sensör alarmı ve teslimat olayları üreten test motoru.
 * **📊 Sistem Analitiği & Grafikler:** Chart.js ile 24 saatlik saatlik olay trendi, tür dağılım donut grafiği ve en aktif kaynaklar tablosu.
@@ -48,6 +49,7 @@ Framework bağımlılığı olmadan saf (Vanilla) PHP 8 ve modern JavaScript ile
 * **⚡ Zero-Latency Streaming:** Native Server-Sent Events (SSE) push channel with automatic 3s polling fallback.
 * **🔥 Multi-Layer Visualization:** Switch seamlessly between Pins, Heatmap Density layer, and Combined mode.
 * **🔍 Dynamic Spatial Filtering:** Bounding-box (visible map viewport), JSON payload full-text search, and multi-criteria filters.
+* **🗄️ Multi-Database Architecture:** Seamless plug-and-play support for **SQLite**, **PostgreSQL / PostGIS**, and **MySQL / MariaDB**.
 * **⏱️ Historical Time Scrubber & Map Replay:** Scrub, rewind, and replay events across a dynamic timeline with variable playback speeds (1x to 10x).
 * **🎲 Built-in Event Simulator:** On-demand generator for realistic vehicle movements, sensor alerts, and deliveries.
 * **📊 Analytics Dashboard:** 24-hour hourly trend line charts and category doughnut distributions via Chart.js.
